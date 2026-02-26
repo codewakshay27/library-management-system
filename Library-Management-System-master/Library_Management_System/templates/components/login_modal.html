@@ -1,0 +1,111 @@
+<div id="loginModal" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50">
+
+  <div class="relative bg-white w-[900px] max-w-4xl rounded-2xl shadow-2xl flex overflow-hidden">
+
+    <!-- LEFT IMAGE -->
+    <div class="w-1/2 hidden md:block bg-slate-100">
+      <img 
+        src="{{ url_for('static', filename='images/login-books.png') }}" 
+        alt="Library"
+        class="h-full w-full object-cover"
+      >
+    </div>
+
+    <!-- RIGHT FLIP BOOK -->
+    <div class="w-full md:w-1/2 relative perspective-1000">
+
+      <div class="relative w-full h-full transition-transform duration-700 transform-style preserve-3d" id="bookBox">
+
+        <!-- LOGIN PAGE -->
+        <div class="absolute inset-0 backface-hidden p-10 flex flex-col justify-center">
+
+          <h2 class="text-2xl font-bold mb-6 text-slate-800">
+            Library Login
+          </h2>
+
+          <form method="POST" action="/login" class="space-y-4">
+
+            <input type="email"
+                   name="email"
+                   placeholder="Enter your email"
+                   required
+                   class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+
+            <input type="password"
+                   name="password"
+                   placeholder="Enter your password"
+                   required
+                   class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+
+            <button type="submit"
+                    class="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-2 rounded-lg transition">
+              Login
+            </button>
+
+          </form>
+
+          <p class="mt-6 text-sm text-gray-600">
+            Don't have an account..?
+            <span onclick="flipBook()" class="text-indigo-600 cursor-pointer hover:underline">
+              Register
+            </span>
+          </p>
+
+        </div>
+
+        <!-- REGISTER PAGE -->
+        <div class="absolute inset-0 backface-hidden rotate-y-180 p-10 flex flex-col justify-center">
+
+          <h2 class="text-2xl font-bold mb-6 text-slate-800">
+            Create Account
+          </h2>
+
+          <form method="POST" action="/register" class="space-y-4">
+
+            <input type="text"
+                   name="name"
+                   placeholder="Enter your name"
+                   required
+                   class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+
+            <input type="email"
+                   name="email"
+                   placeholder="Enter email"
+                   required
+                   class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+
+            <input type="password"
+                   name="password"
+                   placeholder="Enter password"
+                   required
+                   class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+
+            <button type="submit"
+                    class="w-full bg-green-600 hover:bg-green-500 text-white py-2 rounded-lg transition">
+              Register
+            </button>
+
+          </form>
+
+          <p class="mt-6 text-sm text-gray-600">
+            Already have account?
+            <span onclick="flipBook()" class="text-indigo-600 cursor-pointer hover:underline">
+              Login
+            </span>
+          </p>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- CLOSE BUTTON -->
+    <div class="absolute top-4 right-4 text-2xl cursor-pointer text-gray-600 hover:text-red-500"
+         onclick="closeLogin()">
+      ×
+    </div>
+
+  </div>
+
+</div>

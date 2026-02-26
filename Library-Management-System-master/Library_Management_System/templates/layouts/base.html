@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>{% block title %}Smart Library{% endblock %}</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+  /* Brand pill (logo + name) */
+  .brand-pill{
+    background: rgba(0,0,0,0.75);
+    color: #f6c453; /* golden */
+    padding: 8px 14px;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.18);
+    transition: 0.2s ease;
+  }
+  .brand-pill:hover{
+    background: rgba(0,0,0,0.9);
+    transform: translateY(-1px);
+  }
+
+  /* Common dark button */
+  .nav-btn{
+    background: rgba(0,0,0,0.65);
+    color: #ffffff;
+    padding: 8px 14px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.20);
+    transition: 0.2s ease;
+    position: relative;
+    font-weight: 500;
+  }
+  .nav-btn:hover{
+    background: rgba(0,0,0,0.85);
+    transform: translateY(-1px);
+  }
+
+  /* Underline hover */
+  .nav-link::after{
+    content: "";
+    position: absolute;
+    left: 12px;
+    bottom: 5px;
+    width: 0%;
+    height: 2px;
+    background: #ffffff;
+    transition: 0.25s ease;
+  }
+  .nav-link:hover::after{
+    width: calc(100% - 24px);
+  }
+</style>
+</head>
+
+<body class="bg-slate-100 min-h-screen">
+
+<!-- NAVBAR -->
+{% include "components/navbar.html" %}
+
+<!-- USER SIDEBAR -->
+{% if current_user.is_authenticated and not current_user.admin %}
+
+<div id="profileSidebar"
+     class="fixed top-0 right-0 h-full w-80 bg-white shadow-2xl transform translate-x-full transition-transform duration-300 z-50">
+
+    <div class="flex items-center justify-between p-5 border-b">
+
+        <div class="flex items-center gap-3">
+            <div class="w-12 h-12 rounded-full bg-blue-600 text-white flex items-center justify-center text-lg font-bold">
+                {{ current_user.name[0]|upper }}
+            </div>
+
+            <div>
+                <h5 class="font-semibold text-slate-800">
+                    {{ current_user.name }}
+                </h5>
+                <small class="text-slate-500">
+                    {{ current_user.email }}
+                </small>
+            </div>
+        </div>
+
+        <button onclick="toggleProfileSidebar()"
+                class="text-slate-500 hover:text-red-500 text-xl">
+            <i class="fa fa-times"></i>
+        </button>
+
+    </div>
+
+    <div class="flex flex-col p-5 space-y-3 text-slate-700">
+
+        <a href="/dashboard" class="hover:text-blue-600 transition">
+            <i class="fa fa-chart-line mr-2"></i> Dashboard
+        </a>
+
+        <a href="/history" class="hover:text-blue-600 transition">
+            <i class="fa fa-clock mr-2"></i> Issue History
+        </a>
+
+        <a href="/edit/profile" class="hover:text-blue-600 transition">
+            <i class="fa fa-user-edit mr-2"></i> Edit Profile
+        </a>
+
+        <a href="/change/password" class="hover:text-blue-600 transition">
+            <i class="fa fa-key mr-2"></i> Change Password
+        </a>
+
+        <a href="/fine/payment" class="hover:text-blue-600 transition">
+            <i class="fa fa-credit-card mr-2"></i> Fine Payment
+        </a>
+
+        <a href="/logout"
+           class="mt-4 bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded-lg text-center transition">
+            <i class="fa fa-sign-out-alt mr-2"></i> Logout
+        </a>
+
+    </div>
+
+</div>
+
+{% endif %}
+
+
+<!-- ADMIN SIDEBAR -->
+{% if current_user.is_authenticated and current_user.admin %}
+
+<div id="adminSidebar"
+     class="fixed top-0 right-0 h-full w-80 bg-white shadow-2xl transform translate-x-full transition-transform duration-300 z-50">
+
+    <div class="flex justify-end p-4">
+        <button onclick="toggleAdminSidebar()"
+                class="text-slate-500 hover:text-red-500 text-xl">
+            <i class="fa fa-times"></i>
+        </button>
+    </div>
+
+    <div class="flex flex-col items-center px-6 pb-6 border-b">
+
+        <div class="w-20 h-20 rounded-full bg-blue-600 text-white flex items-center justify-center text-3xl font-bold mb-3">
+            {{ current_user.name[0]|upper }}
+        </div>
+
+        <div class="font-semibold text-slate-800">
+            {{ current_user.name }}
+        </div>
+
+        <div class="text-sm text-slate-500">
+            {{ current_user.email }}
+        </div>
+
+    </div>
+
+    <div class="flex flex-col p-6 space-y-3 text-slate-700">
+
+        <a href="/admin/dashboard" class="hover:text-blue-600 transition">
+            <i class="fa fa-chart-line mr-2"></i> Dashboard
+        </a>
+
+        <a href="/add/book" class="hover:text-blue-600 transition">
+            <i class="fa fa-book mr-2"></i> Manage Books
+        </a>
+
+        <a href="/admin/manage-users" class="hover:text-blue-600 transition">
+            <i class="fas fa-users mr-2"></i> Manage Users
+        </a>
+
+        <a href="/admin/issue-history" class="hover:text-blue-600 transition">
+            <i class="fas fa-history mr-2"></i> Issue History
+        </a>
+
+        <a href="/admin/fine-report" class="hover:text-blue-600 transition">
+            <i class="fas fa-rupee-sign mr-2"></i> Fine Report
+        </a>
+
+        <a href="/admin/analytics" class="hover:text-blue-600 transition">
+            <i class="fas fa-chart-pie mr-2"></i> Analytics
+        </a>
+
+        <a href="#" class="hover:text-blue-600 transition">
+            <i class="fa fa-cog mr-2"></i> Settings
+        </a>
+
+        <a href="/logout"
+           class="mt-4 bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded-lg text-center transition">
+            <i class="fa fa-sign-out-alt mr-2"></i> Logout
+        </a>
+
+    </div>
+
+</div>
+
+{% endif %}
+
+
+<!-- LOGIN MODAL -->
+{% include "components/login_modal.html" %}
+
+
+<!-- MAIN CONTENT -->
+<div class="">
+{% block content %}
+{% endblock %}
+</div>
+
+
+<!-- FOOTER -->
+{% include "components/footer.html" %}
+
+
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,62 @@
+{% extends "layouts/base.html" %}
+{% block title %}Remove Book{% endblock %}
+{% block content %}
+
+<div class="max-w-3xl mx-auto pt-24 px-4">
+
+    <form action="/remove/book" method="POST"
+          class="bg-white shadow-xl rounded-2xl p-8 border border-slate-200">
+
+        <!-- Flash Messages -->
+        {% for message in get_flashed_messages() %}
+        <div class="mb-4 bg-yellow-100 border border-yellow-300 text-yellow-800 px-4 py-3 rounded-lg flex justify-between items-center">
+            <span>{{ message }}</span>
+            <button type="button"
+                    onclick="this.parentElement.remove()"
+                    class="text-yellow-700 hover:text-yellow-900 text-lg">
+                &times;
+            </button>
+        </div>
+        {% endfor %}
+
+        <h1 class="text-3xl font-bold text-center text-slate-800 mb-8">
+            Remove Book
+        </h1>
+
+        <!-- Book Select -->
+        <div class="mb-6">
+            <label class="block text-slate-600 mb-2">Select Book</label>
+
+            <div class="flex items-center border rounded-lg px-3 focus-within:ring-2 focus-within:ring-red-500">
+
+                <i class="fa fa-book text-slate-400 mr-3"></i>
+
+                <select name="book"
+                        required
+                        class="w-full py-2 outline-none bg-transparent">
+
+                    <option value="">Select Book</option>
+
+                    {% for book in books %}
+                    <option value="{{ book.id }}">
+                        {{ book.name }} by {{ book.author }}
+                    </option>
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+        </div>
+
+        <!-- Submit -->
+        <button type="submit"
+                class="w-full bg-red-600 hover:bg-red-500 text-white py-3 rounded-lg text-lg font-semibold transition">
+            Remove Book
+        </button>
+
+    </form>
+
+</div>
+
+{% endblock %}

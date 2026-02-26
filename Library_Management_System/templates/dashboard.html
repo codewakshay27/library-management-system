@@ -1,0 +1,102 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+
+<div class="max-w-7xl mx-auto px-6 pt-24">
+
+    <h2 class="text-3xl font-bold text-center text-slate-800 mb-10">
+        Library Dashboard
+    </h2>
+
+    <!-- STATS -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+
+        <div class="bg-white rounded-xl shadow-lg border border-slate-200 p-6 text-center">
+            <h5 class="text-slate-500 mb-2">Total Issued</h5>
+            <h2 class="text-3xl font-bold text-blue-600">
+                {{ books|length if books else 0 }}
+            </h2>
+        </div>
+
+    </div>
+
+    <!-- TABLE SECTION -->
+    <div class="mt-16">
+
+        <h4 class="text-xl font-semibold text-slate-800 mb-6">
+            Your Issued Books
+        </h4>
+
+        {% if books %}
+
+        <div class="overflow-x-auto rounded-xl shadow border border-slate-200">
+
+            <table class="min-w-full bg-white text-slate-700 text-center">
+
+                <thead class="bg-slate-900 text-white">
+                    <tr>
+                        <th class="px-6 py-3">Copy ID</th>
+                        <th class="px-6 py-3">Book Name</th>
+                        <th class="px-6 py-3">Author</th>
+                        <th class="px-6 py-3">Return Date</th>
+                        <th class="px-6 py-3">Status</th>
+                    </tr>
+                </thead>
+
+                <tbody class="divide-y divide-slate-200">
+
+                    {% for copy in books %}
+                    <tr class="hover:bg-slate-50 transition">
+
+                        <td class="px-6 py-4">{{ copy.id }}</td>
+                        <td class="px-6 py-4 font-medium">
+                            {{ copy.book_obj.name }}
+                        </td>
+                        <td class="px-6 py-4">
+                            {{ copy.book_obj.author }}
+                        </td>
+
+                        <td class="px-6 py-4">
+                            {{ copy.date_return.strftime('%d-%m-%Y') if copy.date_return else "-" }}
+                        </td>
+
+                        <td class="px-6 py-4">
+
+                            {% if copy.date_return and copy.date_return < now() %}
+
+                                <span class="px-3 py-1 text-sm rounded-full bg-red-100 text-red-600 font-medium">
+                                    Overdue
+                                </span>
+
+                            {% else %}
+
+                                <span class="px-3 py-1 text-sm rounded-full bg-green-100 text-green-600 font-medium">
+                                    Active
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                    </tr>
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        {% else %}
+
+        <p class="text-slate-600">No books issued.</p>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}

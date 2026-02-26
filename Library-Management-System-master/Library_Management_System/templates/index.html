@@ -1,0 +1,173 @@
+{% extends "layouts/base.html" %}
+{% block title %}Smart Library{% endblock %}
+{% block content %}
+
+<!-- HERO SECTION -->
+<div class="relative h-[90vh] bg-cover bg-center"
+     style="background-image: url('/static/images/library.jpg');">
+
+    <div class="absolute inset-0 bg-slate-900/75 flex flex-col justify-center items-center text-center text-white px-4">
+
+        <h1 class="text-4xl md:text-5xl font-bold mb-4">
+            Smart Library Management System
+        </h1>
+
+        <p class="text-lg text-slate-200">
+            Digital Library Platform using Python & Flask
+        </p>
+
+        <!-- LIVE SEARCH -->
+        <div class="mt-8 w-full max-w-md">
+            <input type="text"
+                   id="searchInput"
+                   placeholder="Search books or authors..."
+                   class="w-full px-6 py-3 rounded-full text-center text-slate-800 focus:ring-2 focus:ring-blue-500 outline-none shadow-lg">
+        </div>
+
+    </div>
+</div>
+
+
+<!-- CATEGORY SECTION -->
+<div class="max-w-7xl mx-auto px-4 mt-16">
+<h2 class="text-3xl font-bold text-center mb-10 text-slate-800">
+    Browse Categories
+</h2>
+
+<div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-8 gap-4 text-center">
+
+{% set categories = [
+("All","📚"),
+("Programming","💻"),
+("Technology","⚙"),
+("Science","🔬"),
+("Novel","📖"),
+("Social","🌍"),
+("History","🏛"),
+("Other","📦")
+] %}
+
+{% for cat, icon in categories %}
+<div class="bg-slate-900 text-white py-3 rounded-lg cursor-pointer hover:bg-blue-600 transition transform hover:scale-105 shadow"
+     onclick="filterCategory('{{ cat }}')">
+    {{ icon }} {{ cat }}
+</div>
+{% endfor %}
+
+</div>
+</div>
+
+
+<!-- BOOK LIST -->
+<div class="max-w-7xl mx-auto px-4 mt-16 mb-20">
+<h2 class="text-3xl font-bold text-center mb-10 text-slate-800">
+    Available Books
+</h2>
+
+<div class="overflow-x-auto rounded-xl shadow border border-slate-200">
+
+<table class="min-w-full bg-white text-slate-700" id="booksTable">
+
+<thead class="bg-slate-900 text-white">
+<tr>
+<th class="px-6 py-3 text-left">ID</th>
+<th class="px-6 py-3 text-left">Name</th>
+<th class="px-6 py-3 text-left">Author</th>
+<th class="px-6 py-3 text-left">Category</th>
+<th class="px-6 py-3 text-left">Action</th>
+</tr>
+</thead>
+
+<tbody class="divide-y divide-slate-200">
+
+{% for book in books %}
+<tr class="hover:bg-slate-50 transition"
+    data-name="{{ book.name|lower }}"
+    data-author="{{ book.author|lower }}"
+    data-category="{{ book.category }}">
+
+<td class="px-6 py-4">{{ book.id }}</td>
+<td class="px-6 py-4 font-medium">{{ book.name }}</td>
+<td class="px-6 py-4">{{ book.author }}</td>
+<td class="px-6 py-4">{{ book.category }}</td>
+
+<td class="px-6 py-4">
+
+{% if book.present_copy == 0 %}
+
+    <button class="bg-red-500 text-white px-4 py-2 rounded-lg">
+        Not Available
+    </button>
+
+{% else %}
+
+    {% if current_user.is_authenticated %}
+
+        <form method="POST" action="/issue/direct/{{ book.id }}">
+            <button type="submit"
+                    class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg transition">
+                Issue Book
+            </button>
+        </form>
+
+    {% else %}
+
+        <button class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg transition"
+                onclick="openLogin(); alert('Please login to issue books');">
+            Issue Book
+        </button>
+
+    {% endif %}
+
+{% endif %}
+
+</td>
+
+</tr>
+{% endfor %}
+
+</tbody>
+</table>
+
+</div>
+</div>
+
+
+<script>
+const searchInput = document.getElementById("searchInput");
+const rows = document.querySelectorAll("#booksTable tbody tr");
+
+searchInput.addEventListener("keyup", function() {
+    const value = this.value.toLowerCase();
+
+    rows.forEach(row => {
+        const name = row.dataset.name;
+        const author = row.dataset.author;
+
+        if (name.includes(value) || author.includes(value)) {
+            row.style.display = "";
+        } else {
+            row.style.display = "none";
+        }
+    });
+});
+
+function filterCategory(category) {
+    rows.forEach(row => {
+
+        if (category === "All") {
+            row.style.display = "";
+            return;
+        }
+
+        if (row.dataset.category === category) {
+            row.style.display = "";
+        } else {
+            row.style.display = "none";
+        }
+
+    });
+}
+</script>
+
+{% endblock %}

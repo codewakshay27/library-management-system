@@ -1,0 +1,80 @@
+{% extends "layouts/base.html" %}
+{% block title %}Issue History{% endblock %}
+
+{% block content %}
+
+<div class="max-w-7xl mx-auto px-6 pt-24">
+
+    <h2 class="text-3xl font-bold text-center text-slate-800 mb-10">
+        Issue History
+    </h2>
+
+    <div class="overflow-x-auto rounded-xl shadow border border-slate-200">
+
+        <table class="min-w-full bg-white text-slate-700">
+
+            <thead class="bg-slate-900 text-white">
+                <tr>
+                    <th class="px-6 py-3 text-left">User</th>
+                    <th class="px-6 py-3 text-left">Book</th>
+                    <th class="px-6 py-3 text-left">Issued On</th>
+                    <th class="px-6 py-3 text-left">Due Date</th>
+                    <th class="px-6 py-3 text-left">Status</th>
+                </tr>
+            </thead>
+
+            <tbody class="divide-y divide-slate-200">
+
+                {% for copy in copies %}
+                <tr class="hover:bg-slate-50 transition">
+
+                    <td class="px-6 py-4 font-medium">
+                        {% if copy.issue %}
+    {{ copy.issue.name }}
+{% else %}
+    Unknown
+{% endif %}
+                    </td>
+
+                    <td class="px-6 py-4">
+                        {{ copy.book_obj.name }}
+                    </td>
+
+                    <td class="px-6 py-4">
+                        {{ copy.date_issued.strftime('%d-%m-%Y') if copy.date_issued }}
+                    </td>
+
+                    <td class="px-6 py-4">
+                        {{ copy.date_return.strftime('%d-%m-%Y') if copy.date_return }}
+                    </td>
+
+                    <td class="px-6 py-4">
+
+                        {% if copy.returned %}
+
+                            <span class="px-3 py-1 text-sm rounded-full bg-green-100 text-green-600 font-medium">
+                                Returned
+                            </span>
+
+                        {% else %}
+
+                            <span class="px-3 py-1 text-sm rounded-full bg-yellow-100 text-yellow-700 font-medium">
+                                Issued
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+                </tr>
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+{% endblock %}

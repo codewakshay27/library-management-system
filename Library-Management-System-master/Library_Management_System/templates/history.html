@@ -1,0 +1,94 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}Issue History{% endblock %}
+
+{% block content %}
+
+<div class="max-w-7xl mx-auto px-6 pt-24">
+
+    <h2 class="text-3xl font-bold text-center text-slate-800 mb-10">
+        Issue History
+    </h2>
+
+    {% if copies %}
+
+    <div class="overflow-x-auto rounded-xl shadow border border-slate-200">
+
+        <table class="min-w-full bg-white text-slate-700">
+
+            <thead class="bg-slate-900 text-white">
+                <tr>
+                    <th class="px-6 py-3 text-left">Copy ID</th>
+                    <th class="px-6 py-3 text-left">Book</th>
+                    <th class="px-6 py-3 text-left">Author</th>
+                    <th class="px-6 py-3 text-left">Issued Date</th>
+                    <th class="px-6 py-3 text-left">Return Date</th>
+                    <th class="px-6 py-3 text-left">Status</th>
+                </tr>
+            </thead>
+
+            <tbody class="divide-y divide-slate-200">
+
+                {% for copy in copies %}
+
+                <tr class="hover:bg-slate-50 transition">
+
+                    <td class="px-6 py-4">{{ copy.id }}</td>
+                    <td class="px-6 py-4 font-medium">
+                        {{ copy.book_obj.name }}
+                    </td>
+                    <td class="px-6 py-4">
+                        {{ copy.book_obj.author }}
+                    </td>
+                    <td class="px-6 py-4">
+                        {{ copy.date_issued.strftime("%d-%m-%Y") if copy.date_issued }}
+                    </td>
+                    <td class="px-6 py-4">
+                        {{ copy.date_return.strftime("%d-%m-%Y") if copy.date_return }}
+                    </td>
+
+                    <td class="px-6 py-4">
+
+                        {% if copy.returned %}
+
+                            <span class="px-3 py-1 text-sm rounded-full bg-green-100 text-green-600 font-medium">
+                                Returned
+                            </span>
+
+                        {% elif copy.date_return and copy.date_return < now() %}
+
+                            <span class="px-3 py-1 text-sm rounded-full bg-red-100 text-red-600 font-medium">
+                                Overdue
+                            </span>
+
+                        {% else %}
+
+                            <span class="px-3 py-1 text-sm rounded-full bg-blue-100 text-blue-600 font-medium">
+                                Active
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+    {% else %}
+
+        <p class="text-slate-600 text-center">
+            No history available.
+        </p>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}
