@@ -112,3 +112,24 @@ class Category(db.Model):
 
     def __repr__(self):
         return f"<Category {self.name}>"
+# =========================
+# SETTINGS MODEL
+# =========================
+class Settings(db.Model):
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    fine_per_day = db.Column(
+        db.Integer,
+        default=5
+    )
+
+    max_books_per_user = db.Column(
+        db.Integer,
+        default=3
+    )
+
+    issue_days = db.Column(
+        db.Integer,
+        default=7
+    )

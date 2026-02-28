@@ -1,0 +1,95 @@
+{% extends "layouts/base.html" %}
+{% block title %}Admin Settings{% endblock %}
+
+{% block content %}
+
+<div class="container mt-5 pt-12">
+
+    <!-- Title -->
+    <h2 class="text-center fw-bold mb-4">
+        Admin Settings
+    </h2>
+
+    <!-- Center align row -->
+    <div class="row justify-content-center">
+
+        <!-- Same width as manage users -->
+        <div class="col-md-8 col-lg-6">
+
+            <!-- Card -->
+            <div class="card shadow">
+
+                <!-- Black strip header -->
+                <div class="card-header bg-dark text-white text-center fw-bold">
+                    ⚙ System Configuration
+                </div>
+
+                <!-- White body -->
+                <div class="card-body">
+
+                    <form method="POST">
+
+                        <!-- Fine -->
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">
+                                Fine per day (₹)
+                            </label>
+
+                            <input type="number"
+                                   class="form-control"
+                                   name="fine_per_day"
+                                   value="{{ settings.fine_per_day }}"
+                                   required>
+                        </div>
+
+
+                        <!-- Max books -->
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">
+                                Max books per user
+                            </label>
+
+                            <input type="number"
+                                   class="form-control"
+                                   name="max_books"
+                                   value="{{ settings.max_books }}"
+                                   required>
+                        </div>
+
+
+                        <!-- Issue duration -->
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">
+                                Issue duration (days)
+                            </label>
+
+                            <input type="number"
+                                   class="form-control"
+                                   name="issue_days"
+                                   value="{{ settings.issue_days }}"
+                                   required>
+                        </div>
+
+
+                        <!-- Button -->
+                        <div class="d-grid mt-4">
+
+                            <button class="btn btn-dark fw-bold">
+                                Save Settings
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

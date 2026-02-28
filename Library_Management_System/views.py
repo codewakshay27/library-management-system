@@ -752,3 +752,43 @@ def user_fine():
         fine=fine,
         overdue=overdue
     )
+# =========================
+# ADMIN SETTINGS PAGE
+# =========================
+@main.route("/admin/settings", methods=["GET", "POST"])
+@login_required
+def admin_settings():
+
+    if not current_user.admin:
+        flash("Access denied")
+        return redirect(url_for("main.dashboard"))
+
+    from Library_Management_System.models import Settings
+
+    settings = Settings.query.first()
+
+    if request.method == "POST":
+
+        fine = request.form.get("fine")
+        max_books = request.form.get("max_books")
+        issue_days = request.form.get("issue_days")
+
+        if fine:
+            settings.fine_per_day = int(fine)
+
+        if max_books:
+            settings.max_books_per_user = int(max_books)
+
+        if issue_days:
+            settings.issue_days = int(issue_days)
+
+        db.session.commit()
+
+        flash("Settings updated successfully")
+
+        return redirect(url_for("main.admin_settings"))
+
+    return render_template(
+        "admin_settings.html",
+        settings=settings
+    )
