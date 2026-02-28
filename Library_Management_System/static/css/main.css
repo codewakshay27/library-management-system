@@ -13,3 +13,18 @@
 .rotate-y-180 {
   transform: rotateY(180deg);
 }
+.profile-sidebar a {
+    display:block;
+    padding:12px;
+    color:white;
+    text-decoration:none;
+    border-radius:8px;
+    margin-bottom:8px;
+    background: rgba(255,255,255,0.05);
+    transition:0.3s;
+}
+
+.profile-sidebar a:hover {
+    background:#2563eb;
+    transform:translateX(5px);
+}

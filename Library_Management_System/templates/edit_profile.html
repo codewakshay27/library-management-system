@@ -1,0 +1,30 @@
+{% extends "layouts/base.html" %}
+{% block content %}
+
+<div class="page-center">
+
+    <div class="profile-card">
+
+        <h2>Edit Profile</h2>
+
+        <form method="POST">
+
+            <label>Name</label>
+            <input type="text" name="name"
+                   value="{{ current_user.name }}" required>
+
+            <label>Email</label>
+            <input type="email" name="email"
+                   value="{{ current_user.email }}" required>
+
+            <button type="submit">
+                Update Profile
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

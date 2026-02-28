@@ -274,6 +274,9 @@ def admin_dashboard():
 # =========================
 # ADD BOOK (SAFE WORKING)
 # =========================
+from sqlalchemy import func
+from datetime import datetime
+from flask import request, flash, redirect, url_for
 class AddBookView(MethodView):
 
     def get(self):
@@ -287,57 +290,85 @@ class AddBookView(MethodView):
 
     def post(self):
 
-        name = request.form.get("name")
-        author = request.form.get("author")
-        description = request.form.get("description")
-        number = request.form.get("number")
-        category_name = request.form.get("category")
+        # get form data safely
+        name = request.form.get("name", "").strip()
+        author = request.form.get("author", "").strip()
+        description = request.form.get("description", "").strip()
+        category = request.form.get("category", "").strip()
+        copies = request.form.get("copies", "").strip()
 
-        # validation
-        if not name or not author or not number:
+        # =========================
+        # VALIDATION
+        # =========================
+        if name == "" or author == "" or copies == "":
             flash("Please fill all required fields!")
             return redirect(url_for("main.add_book"))
 
-        number = int(number)
+        try:
+            copies = int(copies)
+        except:
+            flash("Invalid copies value!")
+            return redirect(url_for("main.add_book"))
 
-        category = Category.query.filter_by(name=category_name).first()
+        # =========================
+        # CHECK existing book (case insensitive)
+        # =========================
+        existing_book = Book.query.filter(
+            func.lower(Book.name) == name.lower()
+        ).first()
 
-        if not category:
-            category = Category.query.filter_by(name="Other").first()
+        # =========================
+        # IF BOOK EXISTS → increase copies
+        # =========================
+        if existing_book:
 
-            if not category:
-                category = Category(name="Other")
-                db.session.add(category)
-                db.session.commit()
+            existing_book.total_copy += copies
+            existing_book.present_copy += copies
 
-        book = Book(
+            for i in range(copies):
+
+                new_copy = Copy(
+                    book=existing_book.id,
+                    date_added=datetime.now(),
+                    returned=False
+                )
+
+                db.session.add(new_copy)
+
+            db.session.commit()
+
+            flash(f"Copies added successfully! Total copies: {existing_book.total_copy}")
+            return redirect(url_for("main.admin_dashboard"))
+
+        # =========================
+        # CREATE NEW BOOK
+        # =========================
+        new_book = Book(
             name=name,
             author=author,
             description=description,
-            category=category.name,
-            total_copy=number,
-            present_copy=number,
-            issued_copy=0
+            category=category,
+            total_copy=copies,
+            issued_copy=0,
+            present_copy=copies
         )
 
-        db.session.add(book)
+        db.session.add(new_book)
         db.session.flush()
 
-        # create copies
-        for i in range(number):
+        for i in range(copies):
 
-            copy = Copy(
-                book=book.id,
+            new_copy = Copy(
+                book=new_book.id,
                 date_added=datetime.now(),
                 returned=False
             )
 
-            db.session.add(copy)
+            db.session.add(new_copy)
 
         db.session.commit()
 
         flash("Book added successfully!")
-
         return redirect(url_for("main.admin_dashboard"))
 # =========================
 # REMOVE BOOK (FULL WORKING SAFE)
@@ -649,3 +680,75 @@ main.add_url_rule(
 @main.route("/about")
 def about():
     return render_template("about.html")
+
+@main.route("/profile/edit", methods=["GET", "POST"])
+@login_required
+def edit_profile():
+
+    if request.method == "POST":
+
+        name = request.form.get("name")
+        email = request.form.get("email")
+
+        if not name or not email:
+            flash("All fields required!")
+            return redirect(url_for("main.edit_profile"))
+
+        # check email exists
+        existing = User.query.filter(
+            User.email == email,
+            User.id != current_user.id
+        ).first()
+
+        if existing:
+            flash("Email already exists!")
+            return redirect(url_for("main.edit_profile"))
+
+        current_user.name = name
+        current_user.email = email
+
+        db.session.commit()
+
+        flash("Profile updated successfully!")
+        return redirect(url_for("main.dashboard"))
+
+    return render_template("edit_profile.html")
+@main.route("/profile/change-password", methods=["GET","POST"])
+@login_required
+def change_password():
+
+    if request.method == "POST":
+
+        old = request.form.get("old_password")
+        new = request.form.get("new_password")
+
+        if old != current_user.password:
+            flash("Old password incorrect!")
+            return redirect(url_for("main.change_password"))
+
+        current_user.password = new
+
+        db.session.commit()
+
+        flash("Password changed successfully!")
+        return redirect(url_for("main.dashboard"))
+
+    return render_template("change_password.html")
+
+@main.route("/profile/fine")
+@login_required
+def user_fine():
+
+    overdue = Copy.query.filter(
+        Copy.issued_by == current_user.id,
+        Copy.date_return < datetime.now(),
+        Copy.returned == False
+    ).all()
+
+    fine = len(overdue) * 10
+
+    return render_template(
+        "user_fine.html",
+        fine=fine,
+        overdue=overdue
+    )

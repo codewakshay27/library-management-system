@@ -1,0 +1,28 @@
+{% extends "layouts/base.html" %}
+{% block content %}
+
+<div class="page-center">
+
+    <div class="profile-card">
+
+        <h2>Fine Details</h2>
+
+        <div class="profile-info">
+
+            <p>Your Fine: ₹{{ fine }}</p>
+
+            {% if fine == 0 %}
+                <p>No fine pending 🎉</p>
+            {% else %}
+                <button>
+                    Pay Fine
+                </button>
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
